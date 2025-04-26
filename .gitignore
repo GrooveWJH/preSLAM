@@ -49,3 +49,23 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+
+.vscode/
+
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+tmp*
+.cache/
+output/
