@@ -1,22 +1,13 @@
-#include <iostream>
-#include <vector>
-#include <Eigen/Dense> // 包含稠密矩阵和向量功能
+#include "mid-solvers.hpp"
 #include <Eigen/IterativeLinearSolvers> // 包含迭代求解器
 #include <Eigen/LU>       // 包含 LU 分解
 #include <Eigen/Cholesky> // 包含 Cholesky 分解
 #include <Eigen/QR>       // 包含 QR 分解
 #include <Eigen/SVD>      // 包含 SVD 分解
+#include <iostream> // 用于 std::cerr
+#include <cmath>    // 用于 std::abs
 
-// 定义一个简单的结构体来存储结果和状态
-struct SolveResult {
-    Eigen::VectorXd solution;
-    bool success = false;
-    int iterations = 0; // 用于迭代法
-    double error = 0.0; // 用于迭代法
-    std::string method = "Unknown";
-};
-
-// --- 直接法求解器 ---
+// --- 直接法求解器实现 ---
 
 // 使用 LU 分解求解 (适用于一般方阵)
 SolveResult solveWithPartialPivLU(const Eigen::MatrixXd& A, const Eigen::VectorXd& b) {
@@ -106,8 +97,7 @@ SolveResult solveWithJacobiSVD(const Eigen::MatrixXd& A, const Eigen::VectorXd& 
     return result;
 }
 
-
-// --- 迭代法求解器 ---
+// --- 迭代法求解器实现 ---
 
 // 使用共轭梯度法 (适用于对称正定矩阵)
 SolveResult solveWithConjugateGradient(const Eigen::MatrixXd& A, const Eigen::VectorXd& b) {
@@ -161,7 +151,7 @@ SolveResult solveWithBiCGSTAB(const Eigen::MatrixXd& A, const Eigen::VectorXd& b
 
 // 手动实现 Jacobi 迭代法 (仅为演示，Eigen 无内置 Dense Jacobi 求解器)
 SolveResult solveWithManualJacobi(const Eigen::MatrixXd& A, const Eigen::VectorXd& b,
-                                  int max_iterations = 1000, double tolerance = 1e-6) {
+                                  int max_iterations, double tolerance) {
     SolveResult result;
     result.method = "Manual Jacobi Iteration";
      if (A.rows() != A.cols() || A.rows() != b.size()) {
@@ -173,8 +163,8 @@ SolveResult solveWithManualJacobi(const Eigen::MatrixXd& A, const Eigen::VectorX
     // 检查对角线元素是否为零 (Jacobi 要求 a_ii != 0)
     for (int i = 0; i < n; ++i) {
         if (std::abs(A(i, i)) < 1e-12) { // 用一个小的阈值检查
-            std::cerr << "Error: Diagonal element A(" << i << "," << i << ") is close to zero. Jacobi may fail.\n";
-            // return result; // 可以选择返回失败，或继续尝试
+            std::cerr << "Warning: Diagonal element A(" << i << "," << i << ") is close to zero. Jacobi may fail or converge slowly.\n";
+            // 不返回失败，但给出警告
         }
     }
 
@@ -187,7 +177,12 @@ SolveResult solveWithManualJacobi(const Eigen::MatrixXd& A, const Eigen::VectorX
         if (std::abs(A(i, i)) > 1e-12) { // 避免除以零
            D_inv(i, i) = 1.0 / A(i, i);
         } else {
-             D_inv(i, i) = 0; // 或者抛出错误，或者用伪逆等策略？这里设为0
+             // 如果对角元素接近零，Jacobi迭代可能无法进行或非常不稳定
+             // 这里的处理方式可以是直接失败，或者用一个很大的数代替逆（模拟无穷大）
+             // 或者保持 D_inv(i,i) 为 0，这会导致该行的 x_new(i) 始终为 0
+             // 这里我们选择让 D_inv(i,i) 为 0 并继续，但这通常不是理想的
+             std::cerr << "Warning: Diagonal element A(" << i << "," << i << ") is very close to zero, setting D_inv(i,i) to 0 for Jacobi iteration.\n";
+             D_inv(i, i) = 0; 
         }
         R(i, i) = 0.0; // 从 A 中移除对角线元素得到 R = L+U
     }
@@ -213,82 +208,4 @@ SolveResult solveWithManualJacobi(const Eigen::MatrixXd& A, const Eigen::VectorX
     result.error = (A * result.solution - b).norm();
     // success 保持 false
     return result;
-}
-
-
-int main() {
-    // --- 示例 1: 一个良态的方阵系统 ---
-    std::cout << "=== Example 1: Well-conditioned Square System ===" << std::endl;
-    Eigen::MatrixXd A1(3, 3);
-    Eigen::VectorXd b1(3);
-    A1 << 4, 1, 1,
-          1, 3, -1,
-          1, -1, 2; // 对称正定矩阵
-    b1 << 6, 3, 2;
-    std::cout << "Matrix A1:\n" << A1 << std::endl;
-    std::cout << "Vector b1:\n" << b1 << std::endl;
-
-    std::vector<SolveResult> results1;
-    results1.push_back(solveWithPartialPivLU(A1, b1));
-    results1.push_back(solveWithLLT(A1, b1)); // A1 是对称正定的，适用
-    results1.push_back(solveWithColPivHouseholderQr(A1, b1));
-    results1.push_back(solveWithJacobiSVD(A1, b1));
-    results1.push_back(solveWithConjugateGradient(A1, b1)); // A1 是对称正定的，适用
-    results1.push_back(solveWithBiCGSTAB(A1, b1));
-    results1.push_back(solveWithManualJacobi(A1, b1));
-
-    for (const auto& res : results1) {
-        std::cout << "\nMethod: " << res.method << std::endl;
-        if (res.success) {
-            std::cout << " Solution x:\n" << res.solution << std::endl;
-            if (res.iterations > 0) std::cout << " Iterations: " << res.iterations << std::endl;
-            std::cout << " Residual Norm ||Ax-b||: " << res.error << std::endl;
-        } else {
-            std::cout << " Solver failed or did not converge." << std::endl;
-            if (res.iterations > 0) std::cout << " Iterations performed: " << res.iterations << std::endl;
-        }
-    }
-
-    // --- 示例 2: 最小二乘问题 (超定系统) ---
-    std::cout << "\n=== Example 2: Least Squares (Overdetermined System) ===" << std::endl;
-    Eigen::MatrixXd A2(4, 2); // 4 个方程, 2 个未知数
-    Eigen::VectorXd b2(4);
-    A2 << 1, 1,
-          1, 2,
-          1, 3,
-          1, 4;
-    b2 << 6, 5, 7, 10; // 真实解可能是 y = 1.5x + 3.5 ? -> x=[3.5, 1.5]
-                      // 1*3.5 + 1*1.5 = 5
-                      // 1*3.5 + 2*1.5 = 6.5
-                      // 1*3.5 + 3*1.5 = 8
-                      // 1*3.5 + 4*1.5 = 9.5
-                      // b 向量与真实解有偏差
-    std::cout << "Matrix A2:\n" << A2 << std::endl;
-    std::cout << "Vector b2:\n" << b2 << std::endl;
-
-    std::vector<SolveResult> results2;
-    // LU 和 Cholesky 不直接适用于非方阵最小二乘
-    // CG, BiCGSTAB, Jacobi 通常用于方阵
-    results2.push_back(solveWithColPivHouseholderQr(A2, b2));
-    results2.push_back(solveWithJacobiSVD(A2, b2));
-
-    // 也可以用正规方程法 A^T A x = A^T b (但可能损失精度)
-    Eigen::MatrixXd AtA = A2.transpose() * A2;
-    Eigen::VectorXd Atb = A2.transpose() * b2;
-    std::cout << "\nSolving Normal Equations A^T A x = A^T b:" << std::endl;
-    std::cout << "A^T A:\n" << AtA << std::endl;
-    std::cout << "A^T b:\n" << Atb << std::endl;
-    results2.push_back(solveWithLLT(AtA, Atb)); // AtA 应该是对称正定的
-
-    for (const auto& res : results2) {
-        std::cout << "\nMethod: " << res.method << std::endl;
-        if (res.success) {
-            std::cout << " Solution x (Least Squares Sense):\n" << res.solution << std::endl;
-            std::cout << " Residual Norm ||Ax-b||: " << res.error << std::endl;
-        } else {
-            std::cout << " Solver failed." << std::endl;
-        }
-    }
-
-    return 0;
-}
+} 

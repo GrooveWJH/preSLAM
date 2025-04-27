@@ -2,6 +2,8 @@
 
 > The mathematics and algorithms, before starting (or during) SLAM learning.
 
+This project explores fundamental mathematical concepts and algorithms relevant to Simultaneous Localization and Mapping (SLAM). A key feature is the side-by-side implementation of examples using both **traditional C++ (C++98/03 style)** and **modern C++ (C++11/14/17/20 features)**. This approach aims to showcase the evolution of C++ programming practices, highlighting the benefits of modern techniques in terms of expressiveness, safety, and maintainability.
+
 ## Prerequisites
 
 * C++ Compiler (supporting C++20, e.g., Clang, GCC)

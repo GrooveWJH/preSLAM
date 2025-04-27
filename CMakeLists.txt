@@ -23,24 +23,27 @@ add_subdirectory(lib)
 
 set(EXPERIMENTS_LIST)
 
-file(GLOB_RECURSE experiments_sources "${CMAKE_SOURCE_DIR}/src/*.cxx" "${CMAKE_SOURCE_DIR}/src/*.cpp") # 递归查找 .cxx 和 .cpp 文件
+file(GLOB_RECURSE experiments_sources "${CMAKE_SOURCE_DIR}/src/*.cxx" "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
 foreach(src_file ${experiments_sources})
     file(RELATIVE_PATH relative_path ${CMAKE_SOURCE_DIR}/src ${src_file})
     get_filename_component(base_name ${relative_path} NAME_WE)
     get_filename_component(target_dir ${relative_path} DIRECTORY)
 
-    if (target_dir)
+    if ("${base_name}" MATCHES "^mid-")
+        message(STATUS "Skipping target creation for intermediate file: ${src_file}")
+        continue()
+    endif()
 
+    if (target_dir)
         string(REPLACE "/" "-" target_name_prefix ${target_dir})
         set(unique_target_name "${target_name_prefix}-${base_name}")
     else()
-
         set(unique_target_name "${base_name}")
     endif()
 
     add_executable(${unique_target_name} ${src_file})
-    # 只链接 preslamlib，它会传递 Eigen 的包含路径
+
     target_link_libraries(${unique_target_name} PRIVATE preslamlib)
     set_target_properties(${unique_target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}/${target_dir}")
 
