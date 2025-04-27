@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(Groove-preSLAM)
 
+# find_package(Eigen3 REQUIRED)
+# message(STATUS "Found Eigen3: headers at ${Eigen3_INCLUDE_DIRS}")
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -27,14 +30,17 @@ foreach(src_file ${experiments_sources})
     get_filename_component(base_name ${relative_path} NAME_WE)
     get_filename_component(target_dir ${relative_path} DIRECTORY)
 
-    string(REPLACE "/" "-" target_name_prefix ${target_dir})
-    if (target_name_prefix)
+    if (target_dir)
+
+        string(REPLACE "/" "-" target_name_prefix ${target_dir})
         set(unique_target_name "${target_name_prefix}-${base_name}")
     else()
+
         set(unique_target_name "${base_name}")
     endif()
 
     add_executable(${unique_target_name} ${src_file})
+    # 只链接 preslamlib，它会传递 Eigen 的包含路径
     target_link_libraries(${unique_target_name} PRIVATE preslamlib)
     set_target_properties(${unique_target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}/${target_dir}")
 
