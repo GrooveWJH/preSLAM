@@ -1,10 +1,29 @@
+/**
+ * @file main.cpp
+ * @brief 演示 Eigen 库中不同线性方程组求解器的用法。
+ *
+ * 该文件包含两个示例：
+ * 1. 求解一个良态的对称正定方阵系统。
+ * 2. 求解一个超定系统的最小二乘问题。
+ *
+ * 使用了来自 mid-solvers.hpp/cpp 中定义的求解函数，并打印结果。
+ */
+
 #include <Eigen/Dense>
 #include <iostream>
 #include <vector>
 
+// 包含实现文件通常不是好的做法，这里是为了简化编译。
+// 在实际项目中，应该将 .cpp 文件分开编译并链接。
 #include "mid-solvers.cpp"
 #include "mid-solvers.hpp"
 
+/**
+ * @brief 程序主入口点。
+ *
+ * 设置示例矩阵和向量，调用不同的求解器，并打印结果。
+ * @return int 程序退出代码 (0 表示成功)。
+ */
 int main()
 {
     // --- 示例 1: 一个良态的方阵系统 ---

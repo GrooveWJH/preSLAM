@@ -17,7 +17,6 @@ using namespace robotics;
  */
 std::optional<std::pair<size_t, size_t>> findNeighborPoseIndicesModern(
     const std::vector<TimedPose>& poses, double target_time) {
-    
     // 使用异常替代错误码，提前检查异常情况
     if (poses.empty()) {
         throw std::invalid_argument("Pose sequence is empty");

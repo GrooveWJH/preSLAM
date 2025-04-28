@@ -9,7 +9,9 @@
 
 // --- 直接法求解器实现 ---
 
-// 使用 LU 分解求解 (适用于一般方阵)
+/**
+ * @brief 使用 LU 分解求解 (适用于一般方阵)
+ */
 SolveResult solveWithPartialPivLU(const Eigen::MatrixXd& A, const Eigen::VectorXd& b) {
     SolveResult result;
     result.method = "PartialPivLU";
@@ -32,7 +34,9 @@ SolveResult solveWithPartialPivLU(const Eigen::MatrixXd& A, const Eigen::VectorX
     return result;
 }
 
-// 使用 Cholesky 分解求解 (适用于对称正定矩阵)
+/**
+ * @brief 使用 Cholesky 分解求解 (适用于对称正定矩阵)
+ */
 SolveResult solveWithLLT(const Eigen::MatrixXd& A, const Eigen::VectorXd& b) {
     SolveResult result;
     result.method = "Cholesky (LLT)";
@@ -57,7 +61,9 @@ SolveResult solveWithLLT(const Eigen::MatrixXd& A, const Eigen::VectorXd& b) {
     return result;
 }
 
-// 使用 QR 分解求解 (适用于任意矩阵，特别是最小二乘问题)
+/**
+ * @brief 使用 QR 分解求解 (适用于任意矩阵，特别是最小二乘问题)
+ */
 SolveResult solveWithColPivHouseholderQr(const Eigen::MatrixXd& A, const Eigen::VectorXd& b) {
     SolveResult result;
     result.method = "Column Pivoting Householder QR";
@@ -77,7 +83,9 @@ SolveResult solveWithColPivHouseholderQr(const Eigen::MatrixXd& A, const Eigen::
     return result;
 }
 
-// 使用 SVD 分解求解 (适用于任意矩阵，非常鲁棒，也可用于最小二乘)
+/**
+ * @brief 使用 SVD 分解求解 (适用于任意矩阵，非常鲁棒，也可用于最小二乘)
+ */
 SolveResult solveWithJacobiSVD(const Eigen::MatrixXd& A, const Eigen::VectorXd& b) {
     SolveResult result;
     result.method = "Jacobi SVD";
@@ -99,7 +107,9 @@ SolveResult solveWithJacobiSVD(const Eigen::MatrixXd& A, const Eigen::VectorXd& 
 
 // --- 迭代法求解器实现 ---
 
-// 使用共轭梯度法 (适用于对称正定矩阵)
+/**
+ * @brief 使用共轭梯度法 (适用于对称正定矩阵)
+ */
 SolveResult solveWithConjugateGradient(const Eigen::MatrixXd& A, const Eigen::VectorXd& b) {
     SolveResult result;
     result.method = "Conjugate Gradient";
@@ -127,7 +137,9 @@ SolveResult solveWithConjugateGradient(const Eigen::MatrixXd& A, const Eigen::Ve
     return result;
 }
 
-// 使用 BiCGSTAB (适用于一般方阵)
+/**
+ * @brief 使用 BiCGSTAB (适用于一般方阵)
+ */
 SolveResult solveWithBiCGSTAB(const Eigen::MatrixXd& A, const Eigen::VectorXd& b) {
     SolveResult result;
     result.method = "BiCGSTAB";
@@ -149,7 +161,9 @@ SolveResult solveWithBiCGSTAB(const Eigen::MatrixXd& A, const Eigen::VectorXd& b
     return result;
 }
 
-// 手动实现 Jacobi 迭代法 (仅为演示，Eigen 无内置 Dense Jacobi 求解器)
+/**
+ * @brief 手动实现的 Jacobi 迭代法 (仅为演示，Eigen 无内置 Dense Jacobi 求解器)
+ */
 SolveResult solveWithManualJacobi(const Eigen::MatrixXd& A, const Eigen::VectorXd& b,
                                   int max_iterations, double tolerance) {
     SolveResult result;

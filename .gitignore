@@ -69,3 +69,5 @@ Icon
 tmp*
 .cache/
 output/
+*.bak
+docs/

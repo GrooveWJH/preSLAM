@@ -1,7 +1,21 @@
+/**
+ * @file traditional.cpp
+ * @brief 计算 N 维空间中两点间欧氏距离的传统 C++ 实现。
+ */
 #include <cmath>
 #include <stdexcept>
 #include <vector>
+#include <iostream> // main 函数需要
 
+/**
+ * @brief 计算两个 N 维点之间的欧氏距离 (传统 C++ 风格)。
+ *
+ * 使用循环遍历坐标并累加差值的平方和，最后开方。
+ * @param p1 第一个点的坐标向量 (std::vector<double>)
+ * @param p2 第二个点的坐标向量 (std::vector<double>)
+ * @return double 两点之间的欧氏距离。
+ * @throw std::invalid_argument 如果两个点的维度不相同。
+ */
 double distance_traditional(const std::vector<double>& p1, const std::vector<double>& p2)
 {
     if (p1.size() != p2.size()) {
@@ -16,8 +30,10 @@ double distance_traditional(const std::vector<double>& p1, const std::vector<dou
     return std::sqrt(sum_sq_diff);
 }
 
-#include <iostream>
-
+/**
+ * @brief 主函数，演示 distance_traditional 函数的用法。
+ * @return int 程序退出代码 (0 表示成功)。
+ */
 int main()
 {
     std::vector<double> p_a = { 1.0, 2.0 },
