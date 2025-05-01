@@ -6,7 +6,6 @@
 #include <map> // 添加 map 头文件
 #include <stdexcept>
 #include <vector> // 保留 vector 用于 main 函数示例
-
 #include "pose.hpp" // 假设 pose.hpp 在同一或可包含路径下
 
 using namespace robotics;

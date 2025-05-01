@@ -13,8 +13,6 @@
 #include <iostream>
 #include <vector>
 
-// 包含实现文件通常不是好的做法，这里是为了简化编译。
-// 在实际项目中，应该将 .cpp 文件分开编译并链接。
 #include "mid-solvers.cpp"
 #include "mid-solvers.hpp"
 

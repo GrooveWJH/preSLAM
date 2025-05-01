@@ -4,6 +4,16 @@
 
 This project explores fundamental mathematical concepts and algorithms relevant to Simultaneous Localization and Mapping (SLAM). A key feature is the side-by-side implementation of examples using both **traditional C++ (C++98/03 style)** and **modern C++ (C++11/14/17/20 features)**. This approach aims to showcase the evolution of C++ programming practices, highlighting the benefits of modern techniques in terms of expressiveness, safety, and maintainability.
 
+## Problems Index
+
+| Project                                               | Description                                                                                 |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [a0_solveMatrix](src/a0_solveMatrix)                     | Implementation of various linear equation solvers using Eigen (LU, Cholesky, QR, SVD, etc.) |
+| [a1_pointDistance](src/a1_pointDistance)                 | Computing Euclidean distance between two points in N-dimensional space                      |
+| [a2_poseTimeInterpolation](src/a2_poseTimeInterpolation) | Linear interpolation of poses in a time series                                              |
+| [a3_a2-PLUS](src/a3_a2-PLUS)                             | Enhanced version of pose interpolation with template implementation                         |
+| [a4_parallelization](src/a4_parallelization)             | Implementation of parallel for_each loop without external libraries                         |
+
 ## Prerequisites
 
 * C++ Compiler (supporting C++20, e.g., Clang, GCC)

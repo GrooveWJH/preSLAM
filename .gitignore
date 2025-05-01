@@ -71,3 +71,4 @@ tmp*
 output/
 *.bak
 docs/
+.cursorignore
